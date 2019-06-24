@@ -225,7 +225,7 @@ public class Level {
                 y++;
             }
         }catch(IOException e){
-            
+            System.out.println("Error reading level file");
         }
     }
     
@@ -273,6 +273,7 @@ public class Level {
         }
     }
     
+    // Currently not used in the game
     private void drawDarkness(Graphics2D graphics){
         int squareWidth = screenWidth/8;
         int squareHeight = screenHeight/8;
