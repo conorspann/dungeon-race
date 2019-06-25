@@ -15,7 +15,7 @@ import java.awt.Graphics2D;
 public class PauseMenu extends Menu{
     
     public PauseMenu(int x, int y){
-        super("splash_paused.png", x, y);
+        super("img//splash_paused.png", x, y);
     }
     
     
