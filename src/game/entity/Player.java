@@ -75,7 +75,7 @@ public class Player extends Entity{
             sideScroll(currentLevel, getLeftSpeed(), 0);
         }else if(hasPistol){
             if(input.getKey(KeyEvent.VK_D)){
-                setCurrentFrame(3);
+                setCurrentFrame(5);
                 if(input.getKey(KeyEvent.VK_ENTER)){
                     //shoot to right
                     currentLevel.getBullet().fire(Direction.EAST);
