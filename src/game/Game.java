@@ -5,12 +5,14 @@
 package game;
 
 import game.level.Level;
+import game.menu.PauseMenu;
 import game.menu.GameOverMenu;
 import game.menu.WinGameMenu;
 import game.menu.MainMenu;
 import game.entity.Skeleton;
 import java.awt.Color;
 import java.awt.Graphics2D;
+import java.awt.event.KeyEvent;
 import java.awt.image.BufferStrategy;
 import javax.swing.JFrame;
 
@@ -24,13 +26,14 @@ public class Game implements Runnable{
     private MainMenu mainMenu;
     private Thread thread;
     private Level currentLevel;
+    private PauseMenu pauseMenu;
     private GameOverMenu gameOverMenu;
     private WinGameMenu winGameMenu;
     private BufferStrategy bufferStrat;
     
     
     private int screenWidth, screenHeight;
-    private boolean gameInProgress, gameOver, winGame;
+    private boolean gameInProgress, gameOver, winGame, paused;
     
     public Game(){
         screenWidth = 800;
@@ -45,11 +48,13 @@ public class Game implements Runnable{
         frame.createBufferStrategy(2);
         bufferStrat = frame.getBufferStrategy();
         mainMenu = new MainMenu();
+        pauseMenu = new PauseMenu((screenWidth/2)-200, (screenHeight/2)-200);
         gameOverMenu = new GameOverMenu((screenWidth/2)-200, (screenHeight/2)-200);
         winGameMenu = new WinGameMenu((screenWidth/2)-200, (screenHeight/2)-200);
         gameInProgress = false;
         gameOver = false;
         winGame = false;
+        paused = true;
         thread = new Thread(this);
     }
     public void start(){
@@ -72,23 +77,34 @@ public class Game implements Runnable{
                 
                 
                 if(gameInProgress && !gameOver && !winGame){
-                    currentLevel.getPlayer().collision(currentLevel);
-                    currentLevel.getPlayer().control(currentLevel, input);
-                    currentLevel.getBullet().control();
-                    currentLevel.getBullet().collision(currentLevel);
-                    currentLevel.getUI().setHealth(currentLevel.getPlayer());
-                    currentLevel.getUI().setEnergy(currentLevel.getPlayer());
-                    winGame = currentLevel.hasWon();
-                    if(!currentLevel.getPlayer().isAlive() || currentLevel.timeOut()){
-                       gameOver = true; 
+                    if(paused){
+                        pauseMenu.control(input);
+                        if(pauseMenu.hasQuit()){
+                            paused = false;
+                            pauseMenu.resetQuit();
+                        }
+                    }else{
+                        currentLevel.getPlayer().collision(currentLevel);
+                        currentLevel.getPlayer().control(currentLevel, input);
+                        currentLevel.getBullet().control();
+                        currentLevel.getBullet().collision(currentLevel);
+                        currentLevel.getUI().setHealth(currentLevel.getPlayer());
+                        currentLevel.getUI().setEnergy(currentLevel.getPlayer());
+                        winGame = currentLevel.hasWon();
+                        if(!currentLevel.getPlayer().isAlive() || currentLevel.timeOut()){
+                           gameOver = true; 
+                        }
+                        //gameOver = !currentLevel.getPlayer().isAlive();
+                        for(Skeleton skeleton: currentLevel.getSkeletons()){
+                            skeleton.collision(currentLevel);
+                            skeleton.control(currentLevel);
+                        }
+                        currentLevel.tick();
+                        //gameOver = currentLevel.timeOut();
+                        if(input.getKey(KeyEvent.VK_P)){
+                            paused = true;
+                        }
                     }
-                    //gameOver = !currentLevel.getPlayer().isAlive();
-                    for(Skeleton skeleton: currentLevel.getSkeletons()){
-                        skeleton.collision(currentLevel);
-                        skeleton.control(currentLevel);
-                    }
-                    currentLevel.tick();
-                    //gameOver = currentLevel.timeOut();
                 }
                 
                 if(gameOver){
@@ -119,7 +135,9 @@ public class Game implements Runnable{
         if(gameInProgress){
             currentLevel.draw(graphics);
         }
-        if(winGame){
+        if(paused){
+            pauseMenu.draw(graphics);
+        }else if(winGame){
             winGameMenu.draw(graphics);
         }else if(gameOver){
             gameOverMenu.draw(graphics);
