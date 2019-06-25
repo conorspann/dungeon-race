@@ -38,6 +38,9 @@ public abstract class Menu {
     public void quitMenu(){
         quit = true;
     }
+    public void resetQuit(){
+        quit = false;
+    }
     public boolean hasQuit(){
         return quit;
     }
