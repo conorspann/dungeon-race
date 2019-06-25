@@ -7,6 +7,7 @@ import game.InputHandler;
 import java.awt.Color;
 import java.awt.Font;
 import java.awt.Graphics2D;
+import java.awt.event.KeyEvent;
 
 /**
  *
@@ -21,7 +22,7 @@ public class PauseMenu extends Menu{
     
     @Override
     public void control(InputHandler input){
-        if(input.anyKeyPressed()){
+        if(input.getKey(KeyEvent.VK_C)){
             quitMenu();
         }
     }
@@ -31,7 +32,7 @@ public class PauseMenu extends Menu{
         super.draw(graphics);
         graphics.setColor(Color.yellow);
         graphics.setFont(new Font("Verdana", Font.BOLD, 20));
-        graphics.drawString("Press any key to exit", getSplashX(), getSplashY() + getSplashHeight());
+        graphics.drawString("Press C to continue!", getSplashX(), getSplashY() + getSplashHeight());
     }
     
 }
