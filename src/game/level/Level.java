@@ -134,6 +134,7 @@ public class Level {
                         if(pistol == null){
                             pistol = new Pistol(x*sizeRatio, (y*sizeRatio)+(sizeRatio/2), sizeRatio/2, sizeRatio/2);
                         }
+                        break;
                     case 'R':
                     case 'r':
                         bricks.add(new Brick(BrickType.BG, x*sizeRatio, y*sizeRatio, sizeRatio, sizeRatio));
